@@ -38,13 +38,10 @@ public class DseConfiguration {
         Builder clusterConfig = new Builder();
         clusterConfig.addContactPoint(cassandraHost);
         clusterConfig.withPort(cassandraPort);
-        
         // Authentication (if provided)
         if (dseUsername.isPresent() && dsePassword.isPresent()  && dseUsername.get().length() > 0) {
-           clusterConfig.withAuthProvider(
-                   new DsePlainTextAuthProvider(dseUsername.get(), dsePassword.get()));
+           clusterConfig.withAuthProvider(new DsePlainTextAuthProvider(dseUsername.get(), dsePassword.get()));
         }
-        
         return clusterConfig.build().connect(cassandraKeyspace);
     }
 }

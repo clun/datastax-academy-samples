@@ -34,6 +34,7 @@ public class TestConnection {
         assertEquals(cassandraKeyspace, dseSession.getLoggedKeyspace());
     }
     
+    /*
     @Test
     public void executeCQL() {
         String text = "Hello World.";
@@ -48,6 +49,6 @@ public class TestConnection {
                 + "WHERE commentid = 1aae5f50-445e-11e8-8977-abaff7c8fa1d "
                 + "AND userid = b17e0fa3-62f7-47f6-a47a-552c925d4d79;")
                   .all().stream().findFirst().get().getString("comment"));
-    }
+    }*/
 
 }
