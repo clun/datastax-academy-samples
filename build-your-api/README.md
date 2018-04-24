@@ -73,8 +73,9 @@ CREATE TABLE IF NOT EXISTS demo.comments_by_user (
     comment text,
     PRIMARY KEY (userid, commentid)
 ) WITH CLUSTERING ORDER BY (commentid DESC);
-
 ```
 
+Crud Repository
+<script src="https://gist.github.com/clun/b577bca87908a50230e331093d6939b5.js"></script>
 
 
