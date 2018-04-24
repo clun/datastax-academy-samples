@@ -3,6 +3,8 @@ package com.academy.datastax;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.FileNotFoundException;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +14,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.academy.datastax.conf.DseConfiguration;
+import com.academy.datastax.utils.DseUtils;
 import com.datastax.driver.dse.DseSession;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(
-        classes= { DseConfiguration.class })
-@TestPropertySource(
-        locations = { "classpath:application-test.properties"})
+@ContextConfiguration(classes= { DseConfiguration.class })
+@TestPropertySource(locations = { "classpath:application-test.properties"})
 public class TestConnection {
     
     @Autowired
@@ -32,6 +33,16 @@ public class TestConnection {
         assertNotNull(cassandraKeyspace);
         assertNotNull(dseSession);
         assertEquals(cassandraKeyspace, dseSession.getLoggedKeyspace());
+    }
+    
+    @Test
+    public void testCreateSchema() throws FileNotFoundException {
+        DseUtils.executeCQLFile(dseSession, "/cql/create-schema.cql");
+    }
+    
+    @Test
+    public void testDropSchema() throws FileNotFoundException {
+        DseUtils.executeCQLFile(dseSession, "/cql/drop-schema.cql");
     }
     
     /*

@@ -33,7 +33,7 @@ public class CommentDseCrudRepository03_CRUD {
     private PreparedStatement insertIntoVideoComment;
     private PreparedStatement deleteFromVideoComment;
     private PreparedStatement deleteFromUserComment;
-    private PreparedStatement selectVideoComment;
+    public PreparedStatement selectVideoComment;
     private PreparedStatement selectUserComment;
 
     /** Default Constructor. */

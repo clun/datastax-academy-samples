@@ -1,12 +1,12 @@
 # Building yout API on top of DSE
 
-URL of the course
-
 ### 1. Setup your environment
-Follow this instruction to setup your environment 
 
-* Install Java and Maven
+Follow this instruction to setup your environment.
+
+* Install Git, Java and Maven
 ```
+brew install git
 brew tap caskroom/versions
 brew update
 brew cask install java8
@@ -20,7 +20,6 @@ or [IntelliJ](https://www.jetbrains.com/idea/)
 ```
 brew install docker
 ```
-
 
 * Download the required images from [Dockerhub](https://hub.docker.com/u/datastax)
 
@@ -41,6 +40,19 @@ docker run -e "DS_LICENSE=accept" -it -d -p 9042:9042 --name dse6 datastax/dse-s
 * Start Studio
 ```
 docker run -e "DS_LICENSE=accept" -it -d -p 9091:9091 --link dse6:dse6 datastax/dse-studio
+```
+
+* Clone repository
+```
+git clone https://github.com/clun/datastax-academy-samples.git
+cd datastax-academy-samples/rest-api-start
+mvn validate
+```
+
+
+* Start with compose
+```
+docker-compose up -d
 ```
 
 * Connect to [Datastax Studio](http://localhost:9091)
@@ -76,5 +88,7 @@ CREATE TABLE IF NOT EXISTS demo.comments_by_user (
 
 ```
 
+
+* Import Init project
 
 

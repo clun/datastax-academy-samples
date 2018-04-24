@@ -67,12 +67,12 @@ public class CommentDseCrudRepositoryZZZ {
     public CommentDseCrudRepositoryZZZ(DseSession dseSession, MappingManager mappingManager) {
         this.dseSession     = dseSession;
         this.mappingManager = mappingManager;
-        prepare();
+        //prepare();
     }
     
     /**
      * Initialize stuffs here.
-     */
+     *
     @PostConstruct
     public void prepare() {
         mapperCommentByUser  = mappingManager.mapper(CommentByUser.class);
@@ -135,7 +135,7 @@ public class CommentDseCrudRepositoryZZZ {
     
     /**
      * Insert Comment entity in 2 tables.
-     */
+     *
     public void insertComment(final Comment comment) {
         
         // Create statement
@@ -151,7 +151,7 @@ public class CommentDseCrudRepositoryZZZ {
      * 
      * @param comment
      *     comment to be inserted by signup user.
-     */
+     *
     public CompletableFuture<Void> insertCommentAsync(final Comment comment) {
         
         // Create statement
@@ -171,7 +171,7 @@ public class CommentDseCrudRepositoryZZZ {
     
     /**
      * Search comment_by_video Asynchronously with Pagination.
-     */
+     *
     public ResultListPage<Comment> findCommentsByVideoId(final QueryCommentByVideo query) {
         BoundStatement boundStatement = buildStatementVideoComments(query);                     // Parse input to create statement
         ResultSet      resultSet      = dseSession.execute(boundStatement);                     // Execute statement to get a resultSet
@@ -180,7 +180,7 @@ public class CommentDseCrudRepositoryZZZ {
     
     /**
      * Search comment_by_video Asynchronously with Pagination.
-     */
+     *
     public CompletableFuture < ResultListPage<Comment> > findCommentsByVideosIdAsync(final QueryCommentByVideo query) {
         BoundStatement  boundStatement  = buildStatementVideoComments(query);                   // Parse input to create statement
         ResultSetFuture resultSetFuture = dseSession.executeAsync(boundStatement);              // Execute statement to get a FUTURE resultSet (Async)
@@ -189,7 +189,7 @@ public class CommentDseCrudRepositoryZZZ {
     
     /**
      * Execute a query against the 'comment_by_user' table.
-     */
+     *
     public ResultListPage<Comment> findCommentsByUserId(final QueryCommentByUser query) {
         // Like before but inlined as a boss 
         return mapToCommentList(dseSession.execute(buildStatementUserComments(query))); 
@@ -197,7 +197,7 @@ public class CommentDseCrudRepositoryZZZ {
     
     /**
      * Execute a query against the 'comment_by_user' table (ASYNC).
-     */
+     *
     public CompletableFuture< ResultListPage<Comment> > findCommentsByUserIdAsync(final QueryCommentByUser query) {
         // Like before but inlined as a boss.. again 
         return buildCompletableFuture(dseSession.executeAsync(buildStatementUserComments(query)))
@@ -209,7 +209,7 @@ public class CommentDseCrudRepositoryZZZ {
      *
      * @param c
      *      sample comment
-     */
+     *
     public void updateComment(final Comment c) {
         Assert.notNull(c, "Comment object is required");
         Assert.notNull(c.getUserid(), "userid is required to update a comment");
@@ -223,7 +223,7 @@ public class CommentDseCrudRepositoryZZZ {
      * When you need a 'custom' query you may use an {@link Accessor} and provide explicity Query.
      *
      * @author DataStax evangelist team.
-     */
+     *
     @Accessor
     public interface CommentAccessor {
         
@@ -242,7 +242,7 @@ public class CommentDseCrudRepositoryZZZ {
      * 
      * @param comment
      *      entity with identifiers
-     */
+     *
     public void deleteComment(final Comment comment) {
         // Check parameterss
         Assert.notNull(comment,                "Comment object is required");
@@ -271,7 +271,7 @@ public class CommentDseCrudRepositoryZZZ {
      * 
      * @param comment
      *      current comment.
-     */
+     *
     private BatchStatement buildBatchStatementInsertComment(Comment comment) {
         BatchStatement batchStatement = new BatchStatement(BatchStatement.Type.UNLOGGED)
                 .add(mapperCommentByVideo.saveQuery(new CommentByVideo(comment))) // Insert Query generate from annotated bean CommentByVideo
@@ -293,7 +293,7 @@ public class CommentDseCrudRepositoryZZZ {
      * @param rs
 ON     * @return
      *      target result
-     */
+     *
     private ResultListPage<Comment> mapToCommentList(ResultSet rs) {
         ResultListPage<Comment> result = new ResultListPage<>();
         for (Row row : rs) {
@@ -324,7 +324,7 @@ ON     * @return
      *      provie the PagingState
      * @return
      *      statement to retrieve comments
-     */
+     *
     private BoundStatement buildStatementUserComments(final QueryCommentByUser query) {
         BoundStatement statement = null;
         if (query.getCommentId().isPresent()) {
@@ -350,7 +350,7 @@ ON     * @return
      *      current request
      * @return
      *      statement
-     */
+     *
     private BoundStatement buildStatementVideoComments(final QueryCommentByVideo query) {
         BoundStatement statement = null;
         if (query.getCommentId().isPresent()) {
@@ -367,8 +367,7 @@ ON     * @return
         statement.setFetchSize(query.getPageSize());
         statement.setConsistencyLevel(ConsistencyLevel.QUORUM);
         return statement;
-    }
-    
-    
+    }*/
+ 
 
 }
