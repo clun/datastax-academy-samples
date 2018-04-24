@@ -2,7 +2,7 @@
 
 ### 1. Setup your environment
 
-Follow this instruction to setup your environment.
+Follow this instructions to setup your environment and start working on the tutorial.
 
 * Install Git, Java and Maven
 ```
@@ -19,27 +19,7 @@ or [IntelliJ](https://www.jetbrains.com/idea/)
 * Download and install Docker
 ```
 brew install docker
-```
 
-* Download the required images from [Dockerhub](https://hub.docker.com/u/datastax)
-
-For second image, you notice that some layers have already been downloaded which may speed up
-download.
-```
-docker pull datastax/dse-server
-docker pull datastax/dse-studio
-docker images | grep datastax
-```
-
-* Start Server
-To run the DSE we need to accept the license. Do do it simply simply add environment variable using docker syntax in the following way. 
-```
-docker run -e "DS_LICENSE=accept" -it -d -p 9042:9042 --name dse6 datastax/dse-server
-```
-
-* Start Studio
-```
-docker run -e "DS_LICENSE=accept" -it -d -p 9091:9091 --link dse6:dse6 datastax/dse-studio
 ```
 
 * Clone repository
@@ -48,7 +28,6 @@ git clone https://github.com/clun/datastax-academy-samples.git
 cd datastax-academy-samples/rest-api-start
 mvn validate
 ```
-
 
 * Start with compose
 ```
