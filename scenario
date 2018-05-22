@@ -1,0 +1,133 @@
+system.graph('customer360').drop();
+
+schema.config().option('graph.schema_mode').set('Development')
+schema.config().option('graph.allow_scan').set('true')
+
+system.graph('customer360').ifNotExists().create()
+
+
+// Properties
+schema.propertyKey('cluster_id').Text().ifNotExists().create()
+schema.propertyKey('cluster_size').Text().ifNotExists().create()
+schema.propertyKey('confidence_level').Decimal().ifNotExists().create()
+schema.propertyKey('golden_company_name').Text().ifNotExists().create()
+schema.propertyKey('golden_display_name').Text().ifNotExists().create()
+schema.propertyKey('golden_company_reg_no').Text().ifNotExists().create()
+schema.propertyKey('golden_customer_name').Text().ifNotExists().create()
+schema.propertyKey('golden_customer_type').Text().ifNotExists().create()
+schema.propertyKey('golden_dob').Date().ifNotExists().create()
+schema.propertyKey('golden_firstname').Text().ifNotExists().create()
+schema.propertyKey('golden_surname').Text().ifNotExists().create()
+
+schema.propertyKey('cd_si_ext').Text().ifNotExists().create()
+schema.propertyKey('src_customer_id').Text().ifNotExists().create()
+schema.propertyKey('customer_type').Text().ifNotExists().create()
+schema.propertyKey('firstname').Text().ifNotExists().create()
+schema.propertyKey('surname').Text().ifNotExists().create()
+schema.propertyKey('company_reg_no').Text().ifNotExists().create()
+schema.propertyKey('company_name').Text().ifNotExists().create()
+schema.propertyKey('customer_type').Text().ifNotExists().create()
+schema.propertyKey('dob').Date().ifNotExists().create()
+
+schema.propertyKey('agreement_id').Text().ifNotExists().create()
+schema.propertyKey('sys_apl').Text().ifNotExists().create()
+schema.propertyKey('agreement_start_date').Date().ifNotExists().create()
+schema.propertyKey('maturity_date').Date().ifNotExists().create()
+schema.propertyKey('terminated_date').Date().ifNotExists().create()
+schema.propertyKey('contract_type').Text().ifNotExists().create()
+schema.propertyKey('vin_no').Text().ifNotExists().create()
+schema.propertyKey('status_id').Text().ifNotExists().create()
+
+// Vertex labels
+schema.vertexLabel('cluster')
+      .partitionKey('cluster_id')
+      .properties('cluster_id', 'cluster_size', 'confidence_level',
+                  'golden_company_name',  'golden_display_name',  'golden_company_reg_no',
+                  'golden_customer_name', 'golden_customer_type', 'golden_dob', 'golden_firstname', 'golden_surname')
+      .ifNotExists().create()
+      
+      
+schema.vertexLabel('customer')
+      .partitionKey('src_customer_id')
+      .properties('src_customer_id', 'cd_si_ext', 'customer_type', 
+                  'firstname',  'surname',  'company_reg_no',
+                  'company_name', 'customer_type', 'dob')
+      .ifNotExists().create()
+schema.vertexLabel('contract')
+      .partitionKey('agreement_id')
+      .properties('agreement_id', 'src_customer_id', 'sys_apl', 
+                  'agreement_start_date',  'maturity_date',  'terminated_date',
+                  'contract_type', 'vin_no', 'status_id')
+      .ifNotExists().create()
+schema.vertexLabel('vehicule')
+      .partitionKey('vin_no')
+      .properties('vin_no')
+      .ifNotExists().create()
+
+// Edge labels
+schema.edgeLabel('containsCustomer').connection('cluster', 'customer').ifNotExists().create()
+//schema.edgeLabel('relatedCluster').connection('customer', 'cluster').ifNotExists().create()
+schema.edgeLabel('suscriptedBy').connection('contract', 'customer').ifNotExists().create()
+//schema.edgeLabel('suscriptedFor').connection('contract', 'cluster').ifNotExists().create()
+schema.edgeLabel('subjectOfContract').connection('contract', 'vehicule').ifNotExists().create()
+//schema.edgeLabel('relatedContract').connection('vehicule', 'contract').ifNotExists().create()
+
+schema.describe()
+
+g.V();
+
+// Get total number of node in the Graph
+g.V().count();
+
+// List Customer in a Cluster
+g.V().has('cluster', 'cluster_id', '4d7ea30626b4ce8beebb68cf6fbe0000581d5c40').bothE();
+
+// Number of Cluster Node in the Graoh
+g.V().hasLabel('cluster').count();
+
+// Number of Customer Node in the Graph
+g.V().hasLabel('customer').count();
+
+// Cluster that have more that one customer
+g.V().has('cluster', 'cluster_size', gt('1')).bothE();
+
+g.V().hasLabel('vehicule').inE();
+
+g.V().has('customer', 'src_customer_id', 'construct_fr_13279897')
+     //.inE('suscriptedBy');
+     .emit()
+     .repeat(both().simplePath())
+     .times(3);
+     
+clusterLunven = graph.addVertex(T.label, 'cluster', 'cluster_id', 'LUNVEN');
+clusterLunven.property('golden_surname', 'Lunven');
+clusterLunven.property('golden_display_name', 'Lunven');
+
+clusterLunven.property('confidence_level', 0.9);
+
+cedrick = graph.addVertex(T.label, 'customer', 'src_customer_id', 'CLU');
+cedrick.property('firstname', 'Cedrick');
+cedrick.property('surname', 'Lunven');
+
+pascal = graph.addVertex(T.label, 'customer', 'src_customer_id', 'PASCAL');
+pascal.property('firstname', 'Pascal');
+pascal.property('surname', 'Lunven');
+
+clusterLunven.addEdge('containsCustomer', pascal);
+clusterLunven.addEdge('containsCustomer', cedrick);
+
+'success'
+
+g.V().has('cluster', 'cluster_id', 'LUNVEN').bothE();
+
+// Index Materilized view
+schema.vertexLabel("vehicule").index("vehiculeByVIN").materialized().by("vin_no").ifNotExists().add();
+
+// Index solr (eq(), neq(), )
+schema.vertexLabel("cluster").index("searchClusterName").search().by("golden_display_name").asText().add();
+//g.V().has("cluster","golden_display_name", Search.tokenRegex("Lunven.*"));
+//g.V().has("cluster","golden_display_name", Search.prefix("Lunven.*"));
+//schema.vertexLabel("cluster").describe();
+
+'Index Created'
+
