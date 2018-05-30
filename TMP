@@ -1,3 +1,6 @@
+export PS1="\[\033[31m\]\u\[\033[00m\]@\[\033[32m\]\h\[\033[00m\]:\[\033[34m\]\w\[\033[00m\]> "
+
+
 CREATE KEYSPACE ckm_t_pilot WITH replication = {
   'class': 'SimpleStrategy', 
   'replication_factor': '3'} AND durable_writes = true;
